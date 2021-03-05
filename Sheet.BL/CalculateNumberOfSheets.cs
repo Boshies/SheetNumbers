@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace ProductSheet
@@ -12,6 +13,7 @@ namespace ProductSheet
 
         public static int GetNumberOfSheets()
         {
+            int numberOfSheets;
 
             // Determines the currentRow max height
             int maxCurrentRowHeight = 0;
@@ -24,49 +26,60 @@ namespace ProductSheet
 
             // Determines the number  of sheets needed to print the list of products
             // Initiliazed to 1
-            int numberOfSheets = 1;
-
-            foreach(var product in ListOfProduct)
+            if (ListOfProduct.Count() == 0)
             {
-                // 1- First we verify if we can add a product to the current line
-                if ( product.Width <= currentRowWidth)
+                numberOfSheets = 0;
+                return numberOfSheets;
+            }
+            else
+            {
+                numberOfSheets = 1;
+                foreach (var product in ListOfProduct)
                 {
-                    currentRowWidth -= product.Width;
+                    // 1- First we verify if we can add a product to the current line
+                    if (product.Width <= currentRowWidth)
+                    {
+                        currentRowWidth -= product.Width;
 
-                    if (product.Height >= maxCurrentRowHeight && product.Height <= currentSheetHeight)
-                    {
-                        maxCurrentRowHeight = product.Height;
-                        currentSheetHeight -= maxCurrentRowHeight;
+                        if (product.Height >= maxCurrentRowHeight && product.Height <= currentSheetHeight)
+                        {
+                            maxCurrentRowHeight = product.Height;
+                            currentSheetHeight -= maxCurrentRowHeight;
+                        }
+                        else
+                        {
+                            maxCurrentRowHeight = 0;
+                            currentRowWidth = Sheet.Width;
+                            currentSheetHeight = Sheet.Height;
+                            numberOfSheets++;
+                        }
                     }
+                    // 2- Update the SheetHeight and going to the next line 
+                    // if the remaining sheet height is inferior the product height 
+                    // we require a new sheet, so we would increment the number of sheets 
+                    // and intiate the values added
                     else
                     {
-                        maxCurrentRowHeight = 0;
-                        currentRowWidth = Sheet.Width;
-                        currentSheetHeight = Sheet.Height;
-                        numberOfSheets++;
+                        if (currentSheetHeight > 0 && currentSheetHeight > product.Height)
+                        {
+                            currentRowWidth = Sheet.Width;
+                        }
+                        else
+                        {
+                            maxCurrentRowHeight = 0;
+                            currentRowWidth = Sheet.Width;
+                            currentSheetHeight = Sheet.Height;
+                            numberOfSheets++;
+                        }
                     }
+
                 }
-                // 2- Update the SheetHeight and going to the next line 
-                // if the remaining sheet height is inferior the product height 
-                // we require a new sheet, so we would increment the number of sheets 
-                // and intiate the values added
-                else
-                {
-                    if(currentSheetHeight > 0 && currentSheetHeight > product.Height)
-                    {
-                        currentRowWidth = Sheet.Width;
-                    }
-                    else
-                    {
-                        maxCurrentRowHeight = 0;
-                        currentRowWidth = Sheet.Width;
-                        currentSheetHeight = Sheet.Height;
-                        numberOfSheets ++;
-                    }
-                }
+                return numberOfSheets;
 
             }
-            return numberOfSheets;
+           
+
+            
 
         }
     }

@@ -37,5 +37,30 @@ namespace SheetTest
             //3- Assert
             Assert.Equal(expectedNumberOfSheet, currentSheetNumbers);
         }
+
+        [Fact]
+        public void TestEmptyProductList()
+        {
+            // 1- Arrange
+            Sheet defaultSheet = new Sheet();
+            List<Product> listOfProduct = new List<Product>();
+
+            CalculateNumberOfSheets.Sheet = defaultSheet;
+            
+            CalculateNumberOfSheets.ListOfProduct = listOfProduct;
+
+            int expectedOutput = 0;
+
+            // 2 - Act
+
+            var output = CalculateNumberOfSheets.GetNumberOfSheets();
+
+            // 3 - Assert
+
+            Assert.Equal(expectedOutput, output);
+
+
+
+        }
     }
 }
